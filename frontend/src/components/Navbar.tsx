@@ -1,10 +1,19 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import {ShoppingCart} from "lucide-react";
+import { getUser, logout } from "../utils/auth";
 import Login from "./Login";
 import Signup from "./Signup";
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    setUser(getUser());
+  }, []);
+
+  const initial = user?.name?.charAt(0).toUpperCase();
 
   return (
     <>
@@ -33,17 +42,43 @@ const Navbar = () => {
           </div>
 
           {/* Auth Actions */}
-          <div className="flex gap-3">
-            <button
-              onClick={() => {
-                setIsLogin(true);
-                setOpen(true);
-              }}
-              className="px-4 py-2 rounded-lg text-pink-500 border border-pink-400 hover:bg-pink-50 transition"
-            >
-              Login
-            </button>
-          </div>
+                    {!user ? (
+            <div className="flex gap-3">
+              <button
+                onClick={() => {
+                  setIsLogin(true);
+                  setOpen(true);
+                }}
+                className="px-4 py-2 rounded-lg text-pink-500 border border-pink-400 hover:bg-pink-50 transition"
+              >
+                Login
+              </button>
+            </div>
+          ) : (
+            <div className="flex items-center gap-4">
+
+              {/* Cart Icon */}
+              <button className="relative">
+                <ShoppingCart className="w-6 h-6 text-pink-500" />
+                <span className="absolute -top-2 -right-2 bg-pink-500 text-white text-xs rounded-full px-1">
+                  0
+                </span>
+              </button>
+
+              {/* User Initial */}
+              <div
+                onClick={() => {
+                  logout();
+                  setUser(null);
+                }}
+                title="Logout"
+                className="w-10 h-10 flex items-center justify-center rounded-full bg-pink-500 text-white font-bold cursor-pointer"
+              >
+                {initial}
+              </div>
+
+            </div>
+          )}
         </div>
       </nav>
 
@@ -59,6 +94,29 @@ const Navbar = () => {
             <Signup
               onSwitch={() => setIsLogin(true)}
               onClose={() => setOpen(false)}
+            />
+          )}
+        </div>
+      )}
+
+      {/* Modal Overlay */}
+      {open && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          {isLogin ? (
+            <Login
+              onSwitch={() => setIsLogin(false)}
+              onClose={() => {
+                setOpen(false);
+                setUser(getUser()); // 🔥 update navbar after login
+              }}
+            />
+          ) : (
+            <Signup
+              onSwitch={() => setIsLogin(true)}
+              onClose={() => {
+                setOpen(false);
+                setUser(getUser()); // 🔥 update navbar after signup
+              }}
             />
           )}
         </div>

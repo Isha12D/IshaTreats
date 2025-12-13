@@ -25,8 +25,12 @@ const Signup = ({ onSwitch, onClose }: SignupProps) => {
       const data = await res.json();
       alert(data.message);
       if (res.ok && data.token) {
-  localStorage.setItem("token", data.token);
-  onSwitch(); // or directly login
+  
+        localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+
+      onClose(); // close modal
+
 }
 
     } catch (error) {

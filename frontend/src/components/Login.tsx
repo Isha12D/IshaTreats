@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 type LoginProps = {
   onSwitch: () => void;
@@ -9,33 +10,41 @@ const Login = ({ onSwitch, onClose }: LoginProps) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
+  e.preventDefault();
+  setLoading(true);
 
-    try {
-      const res = await fetch("http://localhost:5000/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
+  try {
+    const res = await fetch("http://localhost:5000/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
 
-      const data = await res.json();
-      alert(data.message);
+    const data = await res.json();
+    alert(data.message);
 
-      if (res.ok && data.token) {
-  localStorage.setItem("token", data.token);
-  onClose(); // close modal
-}
+    if (!res.ok) return; // stop if login failed
 
-    } catch (error) {
-      alert("Something went wrong");
-      console.error(error);
-    } finally {
-      setLoading(false);
+    if (data.user?.role === "admin") {
+      navigate("/admin");
     }
-  };
+
+    if (data.token) {
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+      onClose(); // close modal
+    }
+
+  } catch (error) {
+    alert("Something went wrong");
+    console.error(error);
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="w-full max-w-md bg-yellow-50 rounded-2xl p-6 shadow-xl">
