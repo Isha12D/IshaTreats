@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 type SignupProps = {
-  onSwitch: () => void;
+  onSwitch: (email: string, password: string) => void;
   onClose: () => void;
 };
 
@@ -24,15 +24,11 @@ const Signup = ({ onSwitch, onClose }: SignupProps) => {
 
       const data = await res.json();
       alert(data.message);
-      if (res.ok && data.token) {
-  
-        localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
-        window.dispatchEvent(new Event("cartUpdated"));
 
-      onClose(); // close modal
+      if (!res.ok) return;
 
-}
+      // 👉 switch to login with filled credentials
+      onSwitch(email, password);
 
     } catch (error) {
       alert("Something went wrong");
@@ -54,7 +50,7 @@ const Signup = ({ onSwitch, onClose }: SignupProps) => {
           placeholder="Name"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-400"
+          className="w-full px-4 py-2 border rounded-lg"
           required
         />
 
@@ -63,7 +59,7 @@ const Signup = ({ onSwitch, onClose }: SignupProps) => {
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-400"
+          className="w-full px-4 py-2 border rounded-lg"
           required
         />
 
@@ -72,33 +68,30 @@ const Signup = ({ onSwitch, onClose }: SignupProps) => {
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-400"
+          className="w-full px-4 py-2 border rounded-lg"
           required
         />
 
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-pink-500 text-white py-2 rounded-lg font-semibold hover:bg-pink-600 transition"
+          className="w-full bg-pink-500 text-white py-2 rounded-lg"
         >
           {loading ? "Signing Up..." : "Sign Up"}
         </button>
       </form>
 
-      <p className="mt-4 text-sm text-center text-gray-600">
+      <p className="mt-4 text-sm text-center">
         Already have an account?{" "}
         <button
-          onClick={onSwitch}
-          className="text-pink-500 font-semibold hover:underline"
+          onClick={() => onSwitch(email, password)}
+          className="text-pink-500 font-semibold"
         >
           Login
         </button>
       </p>
 
-      <button
-        onClick={onClose}
-        className="mt-4 w-full text-sm text-gray-400 hover:text-gray-600"
-      >
+      <button onClick={onClose} className="mt-4 w-full text-sm text-gray-400">
         Close
       </button>
     </div>

@@ -14,6 +14,9 @@ const Navbar = () => {
   const [cartCount, setCartCount] = useState(0);
   const [cartOpen, setCartOpen] = useState(false); // cart modal
   const [userMenuOpen, setUserMenuOpen] = useState(false); // user dropdown
+  const [loginEmail, setLoginEmail] = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
+
 
   const userMenuRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
@@ -39,6 +42,20 @@ const Navbar = () => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  useEffect(() => {
+  const updateUser = () => {
+    setUser(getUser());
+  };
+
+  updateUser(); // initial
+  window.addEventListener("userUpdated", updateUser);
+
+  return () => {
+    window.removeEventListener("userUpdated", updateUser);
+  };
+}, []);
+
 
   const initial = user?.name?.charAt(0).toUpperCase();
 
@@ -124,20 +141,30 @@ const Navbar = () => {
 
       {/* Login / Signup Modal */}
       {open && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-          {isLogin ? (
-            <Login
-              onSwitch={() => setIsLogin(false)}
-              onClose={() => { setOpen(false); setUser(getUser()); }}
-            />
-          ) : (
-            <Signup
-              onSwitch={() => setIsLogin(true)}
-              onClose={() => { setOpen(false); setUser(getUser()); }}
-            />
-          )}
-        </div>
-      )}
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+    {isLogin ? (
+      <Login
+        email={loginEmail}
+        password={loginPassword}
+        onSwitch={() => setIsLogin(false)}
+        onClose={() => {
+          setOpen(false);
+          setUser(getUser());
+        }}
+      />
+    ) : (
+      <Signup
+        onSwitch={(email, password) => {
+          setLoginEmail(email);
+          setLoginPassword(password);
+          setIsLogin(true);
+        }}
+        onClose={() => setOpen(false)}
+      />
+    )}
+  </div>
+)}
+
 
       {/* Cart Modal */}
       {cartOpen && (
