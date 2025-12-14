@@ -3,6 +3,8 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Hero from "./components/Hero";
 import AdminDashboard from "./components/Admin/AdminDashboard";
+import SweetSection from "./components/SweetSection";
+import SnacksCarousel from "./components/SnackCarousel";
 
 function App() {
   return (
@@ -13,7 +15,8 @@ function App() {
         <Route path="/" element={<Hero />} />
         <Route path="/admin" element={<AdminDashboard />} />
       </Routes>
-
+      <SweetSection/>
+      <SnacksCarousel/>
       <Footer />
     </BrowserRouter>
   );

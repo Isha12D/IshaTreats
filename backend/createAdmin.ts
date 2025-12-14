@@ -23,3 +23,6 @@ const createAdmin = async () => {
 };
 
 createAdmin().catch(console.error);
+
+//problem faced-->
+//Initially, the admin user was manually inserted into MongoDB with a plain-text password, which caused login failures because bcrypt compares hashed passwords during authentication; to resolve this, a dedicated createAdmin script was created that connects to the database, hashes the admin password using bcrypt, and stores the user with the admin role, ensuring consistent authentication flow and correct role-based access to the admin dashboard.

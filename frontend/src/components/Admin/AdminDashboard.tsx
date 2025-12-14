@@ -10,7 +10,12 @@ import {
   TableHead,
   TableRow,
   Paper,
+  Select,
+  MenuItem,
 } from "@mui/material";
+
+import type { SelectChangeEvent } from "@mui/material";
+import { SweetCategory } from "../../constants/sweetCategories";
 
 /* ---------------- AXIOS SETUP ---------------- */
 const api = axios.create({
@@ -92,11 +97,31 @@ const AdminDashboard = () => {
           value={form.name}
           onChange={(e) => setForm({ ...form, name: e.target.value })}
         />
-        <TextField
+        {/* <TextField
           label="Category"
           value={form.category}
           onChange={(e) => setForm({ ...form, category: e.target.value })}
-        />
+        /> */}
+        <Select
+  value={form.category}
+  displayEmpty
+  onChange={(e: SelectChangeEvent<string>) =>
+    setForm({ ...form, category: e.target.value })
+  }
+  sx={{ minWidth: 180 }}
+>
+  <MenuItem value="" disabled>
+    Select Category
+  </MenuItem>
+
+  {Object.values(SweetCategory).map((cat) => (
+    <MenuItem key={cat} value={cat}>
+      {cat.replace(/_/g, " ").toUpperCase()}
+    </MenuItem>
+  ))}
+</Select>
+
+
         <TextField
           label="Price"
           type="number"

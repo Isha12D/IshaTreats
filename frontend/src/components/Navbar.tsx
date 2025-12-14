@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import {ShoppingCart} from "lucide-react";
+import { getCartCount } from "../utils/cart";
 import { getUser, logout } from "../utils/auth";
 import Login from "./Login";
 import Signup from "./Signup";
@@ -8,10 +9,33 @@ const Navbar = () => {
   const [open, setOpen] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
   const [user, setUser] = useState<any>(null);
+  const [cartCount, setCartCount] = useState(0);
 
-  useEffect(() => {
-    setUser(getUser());
-  }, []);
+//   useEffect(() => {
+//     setUser(getUser());
+//   }, []);
+
+//   useEffect(() => {
+//   setCartCount(getCartCount());
+//   window.addEventListener("storage", () =>
+//     setCartCount(getCartCount())
+//   );
+// }, []);
+
+useEffect(() => {
+  const updateCart = () => {
+    setCartCount(getCartCount());
+  };
+
+  updateCart(); // initial load
+
+  window.addEventListener("cartUpdated", updateCart);
+
+  return () => {
+    window.removeEventListener("cartUpdated", updateCart);
+  };
+}, []);
+
 
   const initial = user?.name?.charAt(0).toUpperCase();
 
@@ -61,7 +85,7 @@ const Navbar = () => {
               <button className="relative">
                 <ShoppingCart className="w-6 h-6 text-pink-500" />
                 <span className="absolute -top-2 -right-2 bg-pink-500 text-white text-xs rounded-full px-1">
-                  0
+                  {cartCount}
                 </span>
               </button>
 

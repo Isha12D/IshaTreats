@@ -31,13 +31,13 @@ router.post("/", protect, adminOnly, async (req, res) => {
 
 
 /* ---------------- GET ALL SWEETS ---------------- */
-router.get("/", protect, async (_req, res) => {
+router.get("/", async (_req, res) => {
   const sweets = await Sweet.find();
   res.status(200).json(sweets);
 });
 
 /* ---------------- SEARCH SWEETS ---------------- */
-router.get("/search", protect, async (req, res) => {
+router.get("/search", async (req, res) => {
   const { name, category, minPrice, maxPrice } = req.query;
 
   const query: any = {};
@@ -66,7 +66,7 @@ router.put("/:id", protect, adminOnly, async (req, res) => {
 });
 
 /* ---------------- DELETE SWEET (ADMIN) ---------------- */
-router.delete("/:id", protect, adminOnly, async (req, res) => {
+router.delete("/:id",protect, adminOnly, async (req, res) => {
   await Sweet.findByIdAndDelete(req.params.id);
   res.status(200).json({ message: "Sweet deleted successfully" });
 });
