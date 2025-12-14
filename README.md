@@ -151,6 +151,22 @@ http://localhost:5173
 
 ## 📸 Screenshots
 
+### **Home Page**
+![Animated Loader Screenshot](./screenshots/loader.png)
+![Home Screenshot](./screenshots/home.png)
+
+### **Dashboard**
+
+![Dashboard Screenshot](./screenshots/sweets.png)
+![Dashboard Screenshot](./screenshots/snacks.png)
+
+
+### **Cart**
+![Cart Modal](./screenshots/cart.png)
+
+### **Admin Dashboard**
+![Admin Dashboard Screenshot](./screenshots/adminDashboard.png)
+
 ---
 
 ## 🤖 My AI Usage
