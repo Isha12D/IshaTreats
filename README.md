@@ -71,6 +71,7 @@ root
 ├── frontend
 │ ├── src
 │ │ ├── components
+| | ├── constants
 │ │ ├── Pages
 │ │ ├── utils
 │ │ ├── App.tsx
@@ -78,11 +79,16 @@ root
 │ └── package.json
 │
 ├── backend
-│ ├── models
-│ ├── routes
-│ ├── middleware
-│ ├── controllers
-│ └── server.ts
+│ ├── src
+| |  ├── config
+| |  ├── middleware
+| |  ├── models
+| |  ├── routes
+| |  ├── utils
+| |  ├── app.ts
+| |  ├── server.ts
+│ ├── createAdmin.ts (seed admin)
+| └── package.json
 │
 └── README.md
 ```
@@ -144,6 +150,22 @@ http://localhost:5173
 ---
 
 ## 📸 Screenshots
+
+### **Home Page**
+![Animated Loader Screenshot](./screenshots/loader.png)
+![Home Screenshot](./screenshots/home.png)
+
+### **Dashboard**
+
+![Dashboard Screenshot](./screenshots/sweets.png)
+![Dashboard Screenshot](./screenshots/snacks.png)
+
+
+### **Cart**
+![Cart Modal](./screenshots/cart.png)
+
+### **Admin Dashboard**
+![Admin Dashboard Screenshot](./screenshots/adminDashboard.png)
 
 ---
 
