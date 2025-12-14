@@ -71,6 +71,7 @@ root
 ├── frontend
 │ ├── src
 │ │ ├── components
+| | ├── constants
 │ │ ├── Pages
 │ │ ├── utils
 │ │ ├── App.tsx
@@ -78,11 +79,16 @@ root
 │ └── package.json
 │
 ├── backend
-│ ├── models
-│ ├── routes
-│ ├── middleware
-│ ├── controllers
-│ └── server.ts
+│ ├── src
+| |  ├── config
+| |  ├── middleware
+| |  ├── models
+| |  ├── routes
+| |  ├── utils
+| |  ├── app.ts
+| |  ├── server.ts
+│ ├── createAdmin.ts (seed admin)
+| └── package.json
 │
 └── README.md
 ```
