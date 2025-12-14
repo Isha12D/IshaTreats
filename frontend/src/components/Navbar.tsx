@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { ShoppingCart } from "lucide-react";
 import { getCartCount } from "../utils/cart";
 import { getUser, logout } from "../utils/auth";
+import { useNavigate } from "react-router-dom";
 import Login from "./Login";
 import Signup from "./Signup";
 import CartPage from "./CartPage";
@@ -15,6 +16,7 @@ const Navbar = () => {
   const [userMenuOpen, setUserMenuOpen] = useState(false); // user dropdown
 
   const userMenuRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     setUser(getUser());
@@ -94,7 +96,7 @@ const Navbar = () => {
                 {userMenuOpen && (
                   <div className="absolute right-0 mt-2 w-40 bg-white border rounded-lg shadow-lg overflow-hidden z-50">
                     <button
-                      onClick={() => { logout(); setUser(null); setUserMenuOpen(false); }}
+                      onClick={() => { logout(); setUser(null); navigate("/"); setUserMenuOpen(false); }}
                       className="w-full text-left px-4 py-2 hover:bg-pink-50 transition"
                     >
                       Logout

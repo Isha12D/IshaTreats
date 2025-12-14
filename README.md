@@ -17,6 +17,7 @@ The project focuses on clean UI, smooth user experience, secure authentication, 
 - Navbar with user profile dropdown
 - Responsive UI using Tailwind CSS
 - Responsive UI with loading indicators (loaders) for better user experience during data fetching and actions
+- Skeleton card UI to enhance perceived performance
 
 
 ### 🛠 Admin Features
@@ -29,14 +30,6 @@ The project focuses on clean UI, smooth user experience, secure authentication, 
 
 - This project includes a **pre-seeded admin account** for demonstration and evaluation purposes.
 
-### Admin Credentials (Seeded)
-- email: **aisha78@gmail.com**
-- password: **aisha78@**
-
-
-> ⚠️ **Note:**  
-> These credentials are hardcoded/seeded only for academic and local testing purposes.  
-> In a production environment, admin creation would be handled securely via role-based access control.
 
 ### Admin Capabilities
 - Access the Admin Dashboard at: `/admin`

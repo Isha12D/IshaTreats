@@ -1,6 +1,10 @@
 import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import type { InternalAxiosRequestConfig } from "axios";
+import sweet1 from "../../assets/sweet1.png";
+import sweet2 from "../../assets/sweet2.png";
+import sweet3 from "../../assets/sweet3.png";
+import sweet4 from "../../assets/sweet4.png";
 import {
   Button,
   TextField,
@@ -45,6 +49,7 @@ const AdminDashboard = () => {
 
   const [editId, setEditId] = useState<string | null>(null);
   const formRef = useRef<HTMLDivElement | null>(null);
+  const [loading, setLoading] = useState(true);
 
   const fetchSweets = async () => {
     try {
@@ -105,6 +110,14 @@ const AdminDashboard = () => {
     }
   };
 
+  /* Loader → Video switch */
+  useEffect(() => {
+    const t = setTimeout(() => {
+      setLoading(false)
+    }, 2000);
+
+    return () => clearTimeout(t);
+  }, []);
   
 
   const handleRestock = async (id: string) => {
@@ -118,28 +131,57 @@ const AdminDashboard = () => {
     fetchSweets();
   };
 
+  if (loading) {
+      return (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            backgroundColor: "#fff",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flexDirection: "column",
+            zIndex: 9999,
+          }}
+        >
+          <div className="flex gap-4 mb-4">
+            <img src={sweet1} className="sweet-loader delay-1" />
+            <img src={sweet2} className="sweet-loader delay-2" />
+            <img src={sweet3} className="sweet-loader delay-3" />
+            <img src={sweet4} className="sweet-loader delay-4" />
+          </div>
+
+          <p className="text-orange-700 text-lg font-semibold tracking-wide animate-pulse">
+            Let the world be bitter, we stay sweet 🍯
+          </p>
+        </div>
+      );
+    }
+
 
 
   return (
     <Paper sx={{ p: 4 }}>
+
       <h2>
-   {editId ? "Edit Sweet" : "Add New Sweet"}
-</h2>
+        {editId ? "Edit Sweet" : "Add New Sweet"}
+      </h2>
 
 
       {/* ADD SWEET FORM */}
       <div
-  ref={formRef}
-  style={{
-    display: "flex",
-    gap: 12,
-    marginBottom: 20,
-    padding: "16px",
-    borderRadius: "8px",
-    backgroundColor: editId ? "#f5f7ff" : "transparent",
-    border: editId ? "1px solid #c7d2fe" : "none",
-  }}
->
+          ref={formRef}
+          style={{
+            display: "flex",
+            gap: 12,
+            marginBottom: 20,
+            padding: "16px",
+            borderRadius: "8px",
+            backgroundColor: editId ? "#f5f7ff" : "transparent",
+            border: editId ? "1px solid #c7d2fe" : "none",
+          }}
+        >
 
         <TextField
           label="Name"

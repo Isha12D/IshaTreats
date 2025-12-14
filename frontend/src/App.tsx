@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Hero from "./components/Hero";
@@ -7,9 +7,13 @@ import SweetSection from "./components/SweetSection";
 import SnacksCarousel from "./components/SnackCarousel";
 import CartPage from "./components/CartPage";
 
-function App() {
+function AppLayout() {
+  const location = useLocation();
+
+  const isAdminPage = location.pathname.startsWith("/admin");
+
   return (
-    <BrowserRouter>
+    <>
       <Navbar />
 
       <Routes>
@@ -17,9 +21,24 @@ function App() {
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/cart" element={<CartPage />} />
       </Routes>
-      <SweetSection/>
-      <SnacksCarousel/>
+
+      {/* 🔥 Show ONLY for normal users */}
+      {!isAdminPage && (
+        <>
+          <SweetSection />
+          <SnacksCarousel />
+        </>
+      )}
+
       <Footer />
+    </>
+  );
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+      <AppLayout />
     </BrowserRouter>
   );
 }
