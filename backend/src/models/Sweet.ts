@@ -45,7 +45,7 @@ const sweetSchema = new Schema<ISweet>(
     },
     image: {
       type: String,
-      required: true,
+      // required: false,
       trim: true,
     },
   },

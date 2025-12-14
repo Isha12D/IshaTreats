@@ -35,6 +35,8 @@ const Login = ({ onSwitch, onClose }: LoginProps) => {
     if (data.token) {
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
+      window.dispatchEvent(new Event("cartUpdated"));
+
       onClose(); // close modal
     }
 

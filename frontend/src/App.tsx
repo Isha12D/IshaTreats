@@ -5,6 +5,7 @@ import Hero from "./components/Hero";
 import AdminDashboard from "./components/Admin/AdminDashboard";
 import SweetSection from "./components/SweetSection";
 import SnacksCarousel from "./components/SnackCarousel";
+import CartPage from "./components/CartPage";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Hero />} />
         <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/cart" element={<CartPage />} />
       </Routes>
       <SweetSection/>
       <SnacksCarousel/>

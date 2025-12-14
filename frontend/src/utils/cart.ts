@@ -1,3 +1,5 @@
+import { getUserId } from "./auth";
+
 /* -------- Cart Item Type -------- */
 export interface CartItem {
   _id: string;
@@ -7,17 +9,21 @@ export interface CartItem {
   quantity: number;
 }
 
-/* -------- Constants -------- */
-const CART_KEY = "cart";
-
 /* -------- Helpers -------- */
+
+// 🔥 user-specific cart key (FIXED)
+const getCartKey = (): string => {
+  const userId = getUserId();
+  return userId ? `cart_${userId}` : "cart_guest";
+};
+
 export const getCart = (): CartItem[] => {
-  return JSON.parse(localStorage.getItem(CART_KEY) || "[]");
+  return JSON.parse(localStorage.getItem(getCartKey()) || "[]");
 };
 
 export const saveCart = (cart: CartItem[]) => {
-  localStorage.setItem(CART_KEY, JSON.stringify(cart));
-  window.dispatchEvent(new Event("cartUpdated")); // 🔥 notify navbar
+  localStorage.setItem(getCartKey(), JSON.stringify(cart));
+  window.dispatchEvent(new Event("cartUpdated"));
 };
 
 export const getCartCount = (): number => {
@@ -31,7 +37,6 @@ export const getItemQuantity = (id: string): number => {
 
 /* -------- Cart Actions -------- */
 
-// Add / increase
 export const addToCart = (
   item: Omit<CartItem, "quantity">
 ) => {
@@ -47,7 +52,6 @@ export const addToCart = (
   saveCart(cart);
 };
 
-// Decrease / remove
 export const decreaseFromCart = (id: string) => {
   let cart = getCart();
   const existing = cart.find((c) => c._id === id);

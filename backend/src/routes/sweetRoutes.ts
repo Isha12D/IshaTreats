@@ -56,19 +56,68 @@ router.get("/search", async (req, res) => {
 
 /* ---------------- UPDATE SWEET (ADMIN) ---------------- */
 router.put("/:id", protect, adminOnly, async (req, res) => {
-  const sweet = await Sweet.findByIdAndUpdate(
-    req.params.id,
-    req.body,
-    { new: true }
-  );
+  try {
+    const sweet = await Sweet.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true }
+    );
 
-  res.status(200).json(sweet);
+    if (!sweet) {
+      return res.status(404).json({ message: "Sweet not found" });
+    }
+
+    res.json(sweet);
+  } catch (err) {
+    res.status(500).json({ message: "Update failed" });
+  }
 });
+
 
 /* ---------------- DELETE SWEET (ADMIN) ---------------- */
 router.delete("/:id",protect, adminOnly, async (req, res) => {
   await Sweet.findByIdAndDelete(req.params.id);
   res.status(200).json({ message: "Sweet deleted successfully" });
 });
+
+/* ------------------PURCHASE SWEET------------------------ */
+router.post("/:id/purchase", protect, async (req, res) => {
+  const { quantity = 1 } = req.body;
+
+  try {
+    const sweet = await Sweet.findById(req.params.id);
+    if (!sweet) return res.status(404).json({ message: "Sweet not found" });
+
+    if (sweet.quantity < quantity) {
+      return res.status(400).json({ message: "Out of stock" });
+    }
+
+    sweet.quantity -= quantity;
+    await sweet.save();
+
+    res.json({ message: "Purchase successful", sweet });
+  } catch {
+    res.status(500).json({ message: "Purchase failed" });
+  }
+});
+
+/* ----------------------RESTOCK SWEETS--------------------- */
+router.post("/:id/restock", protect, adminOnly, async (req, res) => {
+  const { quantity } = req.body;
+
+  try {
+    const sweet = await Sweet.findById(req.params.id);
+    if (!sweet) return res.status(404).json({ message: "Sweet not found" });
+
+    sweet.quantity += quantity;
+    await sweet.save();
+
+    res.json({ message: "Restocked successfully", sweet });
+  } catch {
+    res.status(500).json({ message: "Restock failed" });
+  }
+});
+
+
 
 export default router;

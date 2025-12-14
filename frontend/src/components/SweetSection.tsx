@@ -23,29 +23,48 @@ const SweetSection = () => {
   const [visibleCount, setVisibleCount] = useState(6);
   const [loadingMore, setLoadingMore] = useState(false);
 
+  // 🔥 NEW: dummy state to force re-render on cart change
+  const [cartVersion, setCartVersion] = useState(0);
+
   const fetchSweets = async () => {
-  try {
-    const response = await axios.get<Sweet[]>("http://localhost:5000/api/sweets", {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    });
+    try {
+      const response = await axios.get<Sweet[]>(
+        "http://localhost:5000/api/sweets",
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
 
-    const data = response.data;
+      const data = response.data;
+      setSweets(data);
 
-    setSweets(data);
-
-    // Extract unique categories
-    const uniqueCategories: string[] = Array.from(new Set(data.map((s) => s.category)));
-    setCategories(uniqueCategories);
-  } catch (error) {
-    console.error("Failed to fetch sweets", error);
-  }
-};
-
+      // Extract unique categories
+      const uniqueCategories: string[] = Array.from(
+        new Set(data.map((s) => s.category))
+      );
+      setCategories(uniqueCategories);
+    } catch (error) {
+      console.error("Failed to fetch sweets", error);
+    }
+  };
 
   useEffect(() => {
     fetchSweets();
+  }, []);
+
+  // 🔥 NEW: listen to cart updates
+  useEffect(() => {
+    const handleCartUpdate = () => {
+      setCartVersion((v) => v + 1); // force re-render
+    };
+
+    window.addEventListener("cartUpdated", handleCartUpdate);
+
+    return () => {
+      window.removeEventListener("cartUpdated", handleCartUpdate);
+    };
   }, []);
 
   const filteredSweets = sweets.filter((s) => {
@@ -62,7 +81,7 @@ const SweetSection = () => {
     setTimeout(() => {
       setVisibleCount((prev) => prev + 6);
       setLoadingMore(false);
-    }, 1200); // simulate loading time
+    }, 1200);
   };
 
   return (
@@ -80,7 +99,6 @@ const SweetSection = () => {
           }}
         />
 
-        {/* Category dropdown */}
         <select
           value={category}
           onChange={(e) => {
@@ -169,7 +187,7 @@ const SweetSection = () => {
           );
         })}
 
-        {/* Skeleton cards while loading more */}
+        {/* Skeletons */}
         {loadingMore &&
           [...Array(6)].map((_, i) => (
             <div
@@ -184,7 +202,6 @@ const SweetSection = () => {
           ))}
       </div>
 
-      {/* Load More button */}
       {visibleCount < filteredSweets.length && !loadingMore && (
         <div className="mt-10 text-center">
           <button

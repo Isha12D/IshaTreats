@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import type { InternalAxiosRequestConfig } from "axios";
 import {
@@ -43,6 +43,9 @@ const AdminDashboard = () => {
     image: "", // new field
   });
 
+  const [editId, setEditId] = useState<string | null>(null);
+  const formRef = useRef<HTMLDivElement | null>(null);
+
   const fetchSweets = async () => {
     try {
       const { data } = await api.get("/sweets");
@@ -56,24 +59,40 @@ const AdminDashboard = () => {
     fetchSweets();
   }, []);
 
-  const handleAddSweet = async () => {
-    if (!form.name || !form.category || !form.price || !form.quantity || !form.image) {
-      alert("Please fill in all fields");
-      return;
-    }
-    try {
-      await api.post("/sweets", {
-        name: form.name,
-        category: form.category,
-        price: Number(form.price),
-        quantity: Number(form.quantity),
-        image: form.image, // send image
-      });
+  const handleSubmit = async () => {
+  if (!form.name || !form.category || !form.price || !form.quantity || !form.image) {
+    alert("Please fill in all fields");
+    return;
+  }
 
-      setForm({ name: "", category: "", price: "", quantity: "", image: "" });
+  const payload = {
+      name: form.name,
+      category: form.category,
+      price: Number(form.price),
+      quantity: Number(form.quantity),
+      image: form.image,
+    };
+
+    try {
+      if (editId) {
+        // 🔥 UPDATE
+        await api.put(`/sweets/${editId}`, payload);
+      } else {
+        // 🔥 ADD
+        await api.post("/sweets", payload);
+      }
+
+      setForm({
+        name: "",
+        category: "",
+        price: "",
+        quantity: "",
+        image: "",
+      });
+      setEditId(null);
       fetchSweets();
     } catch {
-      console.error("Failed to add sweet");
+      console.error("Operation failed");
     }
   };
 
@@ -86,12 +105,42 @@ const AdminDashboard = () => {
     }
   };
 
+  
+
+  const handleRestock = async (id: string) => {
+    const qty = prompt("Enter quantity to restock:");
+    if (!qty) return;
+
+    await api.post(`/sweets/${id}/restock`, {
+      quantity: Number(qty),
+    });
+
+    fetchSweets();
+  };
+
+
+
   return (
     <Paper sx={{ p: 4 }}>
-      <h2>👑 Admin Dashboard – Manage Sweets</h2>
+      <h2>
+   {editId ? "Edit Sweet" : "Add New Sweet"}
+</h2>
+
 
       {/* ADD SWEET FORM */}
-      <div style={{ display: "flex", gap: 12, marginBottom: 20 }}>
+      <div
+  ref={formRef}
+  style={{
+    display: "flex",
+    gap: 12,
+    marginBottom: 20,
+    padding: "16px",
+    borderRadius: "8px",
+    backgroundColor: editId ? "#f5f7ff" : "transparent",
+    border: editId ? "1px solid #c7d2fe" : "none",
+  }}
+>
+
         <TextField
           label="Name"
           value={form.name}
@@ -103,23 +152,23 @@ const AdminDashboard = () => {
           onChange={(e) => setForm({ ...form, category: e.target.value })}
         /> */}
         <Select
-  value={form.category}
-  displayEmpty
-  onChange={(e: SelectChangeEvent<string>) =>
-    setForm({ ...form, category: e.target.value })
-  }
-  sx={{ minWidth: 180 }}
->
-  <MenuItem value="" disabled>
-    Select Category
-  </MenuItem>
+          value={form.category}
+          displayEmpty
+          onChange={(e: SelectChangeEvent<string>) =>
+            setForm({ ...form, category: e.target.value })
+          }
+          sx={{ minWidth: 180 }}
+        >
+          <MenuItem value="" disabled>
+            Select Category
+          </MenuItem>
 
-  {Object.values(SweetCategory).map((cat) => (
-    <MenuItem key={cat} value={cat}>
-      {cat.replace(/_/g, " ").toUpperCase()}
-    </MenuItem>
-  ))}
-</Select>
+          {Object.values(SweetCategory).map((cat) => (
+            <MenuItem key={cat} value={cat}>
+              {cat.replace(/_/g, " ").toUpperCase()}
+            </MenuItem>
+          ))}
+        </Select>
 
 
         <TextField
@@ -139,9 +188,10 @@ const AdminDashboard = () => {
           value={form.image}
           onChange={(e) => setForm({ ...form, image: e.target.value })}
         />
-        <Button variant="contained" onClick={handleAddSweet}>
-          Add Sweet
+        <Button variant="contained" onClick={handleSubmit}>
+          {editId ? "Update Sweet" : "Add Sweet"}
         </Button>
+
       </div>
 
       {/* SWEETS TABLE */}
@@ -172,6 +222,51 @@ const AdminDashboard = () => {
               <TableCell>{sweet.price}</TableCell>
               <TableCell>{sweet.quantity}</TableCell>
               <TableCell>
+                <Button
+  size="small"
+  onClick={() => {
+    setForm({
+      name: sweet.name,
+      category: sweet.category,
+      price: String(sweet.price),
+      quantity: String(sweet.quantity),
+      image: sweet.image,
+    });
+    setEditId(sweet._id);
+
+    // 🔥 Smooth scroll to form
+    setTimeout(() => {
+      formRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }, 100);
+  }}
+>
+  Edit
+</Button>
+
+
+                {editId && (
+                  <Button
+                    color="error"
+                    onClick={() => {
+                      setForm({
+                        name: "",
+                        category: "",
+                        price: "",
+                        quantity: "",
+                        image: "",
+                      });
+                      setEditId(null);
+                    }}
+                  >
+                    Cancel Edit
+                  </Button>
+                )}
+                <Button size="small" onClick={() => handleRestock(sweet._id)}>
+                  Restock
+                </Button>
                 <Button color="error" onClick={() => handleDelete(sweet._id)}>
                   Delete
                 </Button>
