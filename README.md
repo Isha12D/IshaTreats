@@ -164,7 +164,7 @@ http://localhost:5173
 
 ## 🤖 My AI Usage
 - AI Tools Used 
-* ChatGPT (OpenAI)
+    * `ChatGPT (OpenAI)`
 
 - How I Used AI
     - To design and structure React components

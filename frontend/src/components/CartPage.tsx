@@ -17,7 +17,7 @@ const CartPage = () => {
 
     try {
       await axios.post(
-        "http://localhost:5000/api/orders/buy",
+        `${import.meta.env.VITE_API_URL}/orders/buy`,
         {
           items: cartItems.map((i) => ({ sweetId: i._id, quantity: i.quantity })),
         },

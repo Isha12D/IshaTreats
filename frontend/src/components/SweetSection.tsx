@@ -29,7 +29,7 @@ const SweetSection = () => {
   const fetchSweets = async () => {
     try {
       const response = await axios.get<Sweet[]>(
-        "http://localhost:5000/api/sweets",
+        `${import.meta.env.VITE_API_URL}/sweets`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
