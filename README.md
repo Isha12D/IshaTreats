@@ -212,6 +212,20 @@ http://localhost:5173
 
 ---
 
+## 🚀 Live Demo
+
+Frontend: 
+``` 
+https://clinquant-tiramisu-2ad88a.netlify.app/ 
+``` 
+Backend API:
+``` 
+https://ishatreats-2.onrender.com/
+```
+
+
+---
+
 ## 🌸 Final Note
 
 I really enjoyed building this project, as it helped me strengthen my understanding of full-stack development, authentication flows, state management, and user experience design. Working on both the frontend and backend gave me valuable hands-on experience and confidence in building real-world applications.
