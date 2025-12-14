@@ -24,7 +24,7 @@ const SweetSection = () => {
   const [loadingMore, setLoadingMore] = useState(false);
 
   // 🔥 NEW: dummy state to force re-render on cart change
-  const [cartVersion, setCartVersion] = useState(0);
+  const [, setCartVersion] = useState(0);
 
   const fetchSweets = async () => {
     try {
