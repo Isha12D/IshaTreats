@@ -1,17 +1,20 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { ShoppingCart } from "lucide-react";
 import { getCartCount } from "../utils/cart";
 import { getUser, logout } from "../utils/auth";
 import Login from "./Login";
 import Signup from "./Signup";
-import CartPage from "./CartPage"; // 🔥 import the cart page
+import CartPage from "./CartPage";
 
 const Navbar = () => {
   const [open, setOpen] = useState(false); // login/signup modal
   const [isLogin, setIsLogin] = useState(true);
   const [user, setUser] = useState<any>(null);
   const [cartCount, setCartCount] = useState(0);
-  const [cartOpen, setCartOpen] = useState(false); // 🔥 cart modal open
+  const [cartOpen, setCartOpen] = useState(false); // cart modal
+  const [userMenuOpen, setUserMenuOpen] = useState(false); // user dropdown
+
+  const userMenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setUser(getUser());
@@ -22,6 +25,17 @@ const Navbar = () => {
     updateCart(); // initial load
     window.addEventListener("cartUpdated", updateCart);
     return () => window.removeEventListener("cartUpdated", updateCart);
+  }, []);
+
+  // Close user menu if clicked outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) {
+        setUserMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   const initial = user?.name?.charAt(0).toUpperCase();
@@ -46,22 +60,19 @@ const Navbar = () => {
           {!user ? (
             <div className="flex gap-3">
               <button
-                onClick={() => {
-                  setIsLogin(true);
-                  setOpen(true);
-                }}
+                onClick={() => { setIsLogin(true); setOpen(true); }}
                 className="px-4 py-2 rounded-lg text-pink-500 border border-pink-400 hover:bg-pink-50 transition"
               >
                 Login
               </button>
             </div>
           ) : (
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-4 relative">
 
               {/* Cart Icon */}
               <button
                 className="relative"
-                onClick={() => setCartOpen(true)} // 🔥 open cart modal
+                onClick={() => setCartOpen(true)}
               >
                 <ShoppingCart className="w-6 h-6 text-pink-500" />
                 <span className="absolute -top-2 -right-2 bg-pink-500 text-white text-xs rounded-full px-1">
@@ -69,16 +80,39 @@ const Navbar = () => {
                 </span>
               </button>
 
-              {/* User Initial */}
-              <div
-                onClick={() => {
-                  logout();
-                  setUser(null);
-                }}
-                title="Logout"
-                className="w-10 h-10 flex items-center justify-center rounded-full bg-pink-500 text-white font-bold cursor-pointer"
-              >
-                {initial}
+              {/* User Initial with dropdown */}
+              <div ref={userMenuRef} className="relative">
+                <div
+                  onClick={() => setUserMenuOpen(prev => !prev)}
+                  title="User Menu"
+                  className="w-10 h-10 flex items-center justify-center rounded-full bg-pink-500 text-white font-bold cursor-pointer"
+                >
+                  {initial}
+                </div>
+
+                {/* Dropdown menu */}
+                {userMenuOpen && (
+                  <div className="absolute right-0 mt-2 w-40 bg-white border rounded-lg shadow-lg overflow-hidden z-50">
+                    <button
+                      onClick={() => { logout(); setUser(null); setUserMenuOpen(false); }}
+                      className="w-full text-left px-4 py-2 hover:bg-pink-50 transition"
+                    >
+                      Logout
+                    </button>
+                    <button
+                      onClick={() => alert("Settings clicked")} // dummy
+                      className="w-full text-left px-4 py-2 hover:bg-pink-50 transition"
+                    >
+                      Settings
+                    </button>
+                    <button
+                      onClick={() => alert("Profile clicked")} // dummy
+                      className="w-full text-left px-4 py-2 hover:bg-pink-50 transition"
+                    >
+                      Profile
+                    </button>
+                  </div>
+                )}
               </div>
 
             </div>
@@ -92,18 +126,12 @@ const Navbar = () => {
           {isLogin ? (
             <Login
               onSwitch={() => setIsLogin(false)}
-              onClose={() => {
-                setOpen(false);
-                setUser(getUser()); // update navbar
-              }}
+              onClose={() => { setOpen(false); setUser(getUser()); }}
             />
           ) : (
             <Signup
               onSwitch={() => setIsLogin(true)}
-              onClose={() => {
-                setOpen(false);
-                setUser(getUser()); // update navbar
-              }}
+              onClose={() => { setOpen(false); setUser(getUser()); }}
             />
           )}
         </div>
@@ -119,7 +147,7 @@ const Navbar = () => {
             >
               Close
             </button>
-            <CartPage /> {/* 🔥 embedded CartPage component */}
+            <CartPage />
           </div>
         </div>
       )}
