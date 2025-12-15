@@ -84,6 +84,17 @@ const SweetSection = () => {
     }, 1200);
   };
 
+  const requireLogin = () => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      window.dispatchEvent(new Event("openLoginModal"));
+      return false;
+    }
+    return true;
+  };
+
+
   return (
     <div className="max-w-7xl mx-auto px-6 py-10">
       <h2 className="text-3xl font-bold mb-6">🍬 Our Sweets</h2>
@@ -147,14 +158,17 @@ const SweetSection = () => {
 
               {qty === 0 ? (
                 <button
-                  onClick={() =>
+                  onClick={() => {
+                    if (!requireLogin()) return;
+
                     addToCart({
                       _id: sweet._id,
                       name: sweet.name,
                       price: sweet.price,
                       image: sweet.image,
-                    })
-                  }
+                    });
+                  }}
+
                   className="mt-3 w-full bg-pink-500 text-white py-2 rounded hover:bg-pink-600"
                 >
                   Add to Cart
@@ -169,14 +183,17 @@ const SweetSection = () => {
                   </button>
                   <span className="font-semibold">{qty}</span>
                   <button
-                    onClick={() =>
+                    onClick={() => {
+                      if (!requireLogin()) return;
+
                       addToCart({
                         _id: sweet._id,
                         name: sweet.name,
                         price: sweet.price,
                         image: sweet.image,
-                      })
-                    }
+                      });
+                    }}
+
                     className="text-xl font-bold text-pink-500"
                   >
                     +

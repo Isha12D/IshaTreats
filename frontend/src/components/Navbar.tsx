@@ -44,17 +44,31 @@ const Navbar = () => {
   }, []);
 
   useEffect(() => {
-  const updateUser = () => {
-    setUser(getUser());
-  };
+    const updateUser = () => {
+      setUser(getUser());
+    };
 
-  updateUser(); // initial
-  window.addEventListener("userUpdated", updateUser);
+    updateUser(); // initial
+    window.addEventListener("userUpdated", updateUser);
 
-  return () => {
-    window.removeEventListener("userUpdated", updateUser);
-  };
-}, []);
+    return () => {
+      window.removeEventListener("userUpdated", updateUser);
+    };
+  }, []);
+
+  useEffect(() => {
+    const openLogin = () => {
+      setIsLogin(true);
+      setOpen(true);
+    };
+
+    window.addEventListener("openLoginModal", openLogin);
+
+    return () => {
+      window.removeEventListener("openLoginModal", openLogin);
+    };
+  }, []);
+
 
 
   const initial = user?.name?.charAt(0).toUpperCase();
@@ -141,29 +155,29 @@ const Navbar = () => {
 
       {/* Login / Signup Modal */}
       {open && (
-  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-    {isLogin ? (
-      <Login
-        email={loginEmail}
-        password={loginPassword}
-        onSwitch={() => setIsLogin(false)}
-        onClose={() => {
-          setOpen(false);
-          setUser(getUser());
-        }}
-      />
-    ) : (
-      <Signup
-        onSwitch={(email, password) => {
-          setLoginEmail(email);
-          setLoginPassword(password);
-          setIsLogin(true);
-        }}
-        onClose={() => setOpen(false)}
-      />
-    )}
-  </div>
-)}
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          {isLogin ? (
+            <Login
+              email={loginEmail}
+              password={loginPassword}
+              onSwitch={() => setIsLogin(false)}
+              onClose={() => {
+                setOpen(false);
+                setUser(getUser());
+              }}
+            />
+          ) : (
+            <Signup
+              onSwitch={(email, password) => {
+                setLoginEmail(email);
+                setLoginPassword(password);
+                setIsLogin(true);
+              }}
+              onClose={() => setOpen(false)}
+            />
+          )}
+        </div>
+      )}
 
 
       {/* Cart Modal */}
